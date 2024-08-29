@@ -124,13 +124,15 @@ the icon was used to launch your app. So make sure it's unique amongst your icon
   ]);
 ```
 
-### onHomeIconPressed
-When a home icon is pressed, your app launches and this JS callback is invoked. I found it worked
-reliable when you use it like this (you should recognize the `type` params used previously):
+### registerCallback
+
+When your app launches, make sure to call this method to register a callback that will be invoked when a HomeScreen shortcut is activated by the user. If the app was launched by a shortcut, the callback will be called immediately.
+
+> Once the callback is registered, it may be called multiple times. For example, if the user sends the app to the background and re-activates it via a shortcut.
 
 ```js
   document.addEventListener('deviceready', function () {
-    ThreeDeeTouch.onHomeIconPressed = function (payload) {
+    ThreeDeeTouch.registerCallback(function (payload) {
       console.log("Icon pressed. Type: " + payload.type + ". Title: " + payload.title + ".");
       if (payload.type == 'checkin') {
         document.location = 'checkin.html';
@@ -140,7 +142,10 @@ reliable when you use it like this (you should recognize the `type` params used 
         // hook up any other icons you may have and do something awesome (e.g. launch the Camera UI, then share the image to Twitter)
         console.log(JSON.stringify(payload));
       }
-    }
+    },
+    error => {
+      console.log("Failed to register shortcut callback", error);
+    });
   }, false);
 ```
 
@@ -216,6 +221,7 @@ This is the same as the `type` param of `configureQuickActions`, so it's what yo
 `onHomeIconPressed` as `payload.type`. Just do something cool with that info.
 
 ## 6. Changelog
+* T.B.D Avoid race conditions when registering for shortcut callbacks during app startup
 * 1.3.8 Support WKWebViewOnly build settings, thanks [#45](https://github.com/EddyVerbruggen/cordova-plugin-3dtouch/pull/45)!
 * 1.3.7 Ionic 4 compat, thanks [#43](https://github.com/EddyVerbruggen/cordova-plugin-3dtouch/issues/43)!
 * 1.3.6 Get back the subtitle when a home icon was pressed, thanks [#27](https://github.com/EddyVerbruggen/cordova-plugin-3dtouch/issues/27)!

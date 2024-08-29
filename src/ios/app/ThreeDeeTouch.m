@@ -5,9 +5,8 @@
 
 @implementation ThreeDeeTouch
 
-- (void) deviceIsReady:(CDVInvokedUrlCommand *)command {
-    self.initDone = YES;
-}
+NSDictionary* pendingShortcut = nil;
+NSString* shortcutCallbackId = nil;
 
 - (void) isAvailable:(CDVInvokedUrlCommand *)command {
     
@@ -117,6 +116,27 @@
     else {
         NSLog(@"Invalid iconType passed to the 3D Touch plugin. So not adding one.");
         return 0;
+    }
+}
+
+- (void) registerCallback:(CDVInvokedUrlCommand*)command {
+    shortcutCallbackId = command.callbackId;
+    if (pendingShortcut != nil) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pendingShortcut];
+        result.keepCallback = @TRUE;
+        [self.commandDelegate sendPluginResult:result callbackId:shortcutCallbackId];
+        pendingShortcut = nil;
+    }
+}
+
+- (void) shortcutReceived:(NSDictionary*)shortcut {
+    if (shortcutCallbackId != nil) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:shortcut];
+        result.keepCallback = @TRUE;
+        [self.commandDelegate sendPluginResult:result callbackId:shortcutCallbackId];
+    }
+    else {
+        pendingShortcut = shortcut;
     }
 }
 @end
