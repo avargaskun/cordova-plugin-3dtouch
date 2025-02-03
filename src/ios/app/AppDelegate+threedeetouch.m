@@ -9,7 +9,7 @@
     NSDictionary* message = @{
         @"type": shortcutItem.type,
         @"title": shortcutItem.localizedTitle,
-        @"subtitle": shortcutItem.localizedSubtitle
+        @"subtitle": shortcutItem.localizedSubtitle ?: @""
     };
     ThreeDeeTouch *threeDeeTouch = [self.viewController getCommandInstance:@"ThreeDeeTouch"];
     [threeDeeTouch shortcutReceived:message];
