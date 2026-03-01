@@ -12,7 +12,14 @@
         @"subtitle": shortcutItem.localizedSubtitle ?: @""
     };
     ThreeDeeTouch *threeDeeTouch = [self.viewController getCommandInstance:@"ThreeDeeTouch"];
-    [threeDeeTouch shortcutReceived:message];
+    if (threeDeeTouch != nil) {
+        // Plugin already instantiated (app was running) — deliver via callback directly.
+        [threeDeeTouch shortcutReceived:message];
+    } else {
+        // Plugin not yet instantiated (cold launch, JS not ready) — store in the
+        // file-scope static so getLaunchShortcut: can retrieve it once JS calls it.
+        [ThreeDeeTouch storeLaunchShortcut:message];
+    }
     completionHandler(YES);
 }
 

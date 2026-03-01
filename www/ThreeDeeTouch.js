@@ -27,4 +27,8 @@ ThreeDeeTouch.prototype.registerCallback = function(cb, onError) {
   exec(cb, onError, "ThreeDeeTouch", "registerCallback");
 };
 
+ThreeDeeTouch.prototype.getLaunchShortcut = function(onSuccess, onError) {
+  exec(onSuccess, onError, "ThreeDeeTouch", "getLaunchShortcut", []);
+};
+
 module.exports = new ThreeDeeTouch();

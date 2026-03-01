@@ -121,11 +121,24 @@ NSString* shortcutCallbackId = nil;
 
 - (void) registerCallback:(CDVInvokedUrlCommand*)command {
     shortcutCallbackId = command.callbackId;
+    // pendingShortcut is intentionally NOT delivered here.
+    // It is retrieved explicitly via getLaunchShortcut, called from
+    // ShortcutsService.checkForShortcut() during the cold-launch flow.
+    // Delivering it here via sendPluginResult would race against
+    // checkForShortcut() and could result in double-delivery.
+}
+
++ (void) storeLaunchShortcut:(NSDictionary*)shortcut {
+    pendingShortcut = shortcut;
+}
+
+- (void) getLaunchShortcut:(CDVInvokedUrlCommand*)command {
     if (pendingShortcut != nil) {
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:pendingShortcut];
-        result.keepCallback = @TRUE;
-        [self.commandDelegate sendPluginResult:result callbackId:shortcutCallbackId];
         pendingShortcut = nil;
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
     }
 }
 

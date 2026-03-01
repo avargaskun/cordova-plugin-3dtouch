@@ -8,7 +8,9 @@
 - (void) enableLinkPreview:(CDVInvokedUrlCommand*)command;
 - (void) disableLinkPreview:(CDVInvokedUrlCommand*)command;
 - (void) registerCallback:(CDVInvokedUrlCommand*)command;
+- (void) getLaunchShortcut:(CDVInvokedUrlCommand*)command;
 - (void) shortcutReceived:(NSDictionary*)shortcut;
++ (void) storeLaunchShortcut:(NSDictionary*)shortcut;
 
 @end
 
